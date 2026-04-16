@@ -37,7 +37,6 @@
 
     /* ── NAV ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.25rem 2.5rem;
       background: var(--white);
@@ -80,7 +79,7 @@
 
     /* ── HERO ── */
     #hero {
-      margin-top: 57px;
+      padding-top: 0;
       display: grid;
       grid-template-columns: 1fr 1fr;
       min-height: 0;
@@ -380,13 +379,13 @@
     }
 
     /* ── BLUEPRINT ── */
-    #blueprint { padding: 5rem 0; background: var(--white); }
+    #blueprint { padding: 2rem 0 5rem; background: var(--white); }
     .blueprint-tabs {
       display: flex; gap: 0;
       border-bottom: 1px solid rgba(26,18,8,0.1);
       margin-bottom: 2.5rem;
       position: sticky;
-      top: 57px;
+      top: 0;
       background: var(--white);
       z-index: 50;
     }
@@ -415,7 +414,7 @@
     #principles { padding: 0; }
 
     /* ── FOUNDERS ── */
-    #founders { padding: 5rem 0 1.2rem 0; background: var(--white); }
+    #founders { padding: 2rem 0 1.2rem 0; background: var(--white); }
     .founders-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -663,6 +662,12 @@
       opacity: 1;
       transform: translateY(0);
     }
+    @media (hover: none) {
+      .founder-overlay .founder-bio {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     /* ── NAV LINK underline animation ── */
     .nav-links a {
@@ -706,7 +711,7 @@
       SheSpeaks<br/><em>in your city.</em>
     </h1>
     <p class="hero-sub">We all crave deep connection, especially from other women. But what if there's something better than brunch? We'll teach you how to create a space where women truly open up, connect, and keep coming back.</p>
-    <a class="hero-cta" href="#blueprint">Get the Blueprint</a>
+    <a class="hero-cta" href="#blueprint">Read the Blueprint</a>
   </div>
   <div class="hero-img">
     <img src="images/hero.png" alt="SheSpeaks event" />
@@ -740,13 +745,13 @@
 <!-- MANIFESTO -->
 <section id="manifesto">
   <div class="manifesto-grid reveal">
+    <div class="card card-cream">
+      <div class="label" style="font-size:1.5rem;letter-spacing:0.08em">Founded 2024</div>
+      <p class="card-body">Tergel and Amy started SheSpeaks to provide a space where women can speak freely, imperfectly, and in real time. After hosting 25+ shows in LA and SF, it became clear that we had stumbled upon a formula that created deep connection among women. And with this guide, now you can <strong> start your own community where you live.</strong></p>
+    </div>
     <div class="card card-grad-a">
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;line-height:1.4;color:var(--cream);margin-bottom:1rem">"When a woman takes the mic, she is saying: <em style="font-weight:400">Follow me for a moment."</em></h2>
       <p class="card-body-light">A curated, intimate space where women speak off the cuff. No scripts. No perfection required - just women sharing their stories with each other.</p>
-    </div>
-    <div class="card card-cream">
-      <div class="label">Founded 2024</div>
-      <p class="card-body">Tergel and Amy started SheSpeaks to provide a space where women can speak freely, imperfectly, and in real time. After hosting 25+ shows in LA and SF, it became clear that we had stumbled upon a formula that created deep connection among women. And with this guide, now you can <strong> start your own community where you live.</strong></p>
     </div>
   </div>
 </section>
@@ -885,6 +890,9 @@
     </div>
   </div>
 </section>
+
+<!-- DIVIDER -->
+<div style="height:3px;background:linear-gradient(to right, var(--orange), var(--violet), var(--purple), var(--burgundy));"></div>
 
 <!-- FOUNDERS -->
 <section id="founders">
