@@ -384,10 +384,6 @@
       display: flex; gap: 0;
       border-bottom: 1px solid rgba(26,18,8,0.1);
       margin-bottom: 2.5rem;
-      position: sticky;
-      top: 0;
-      background: var(--white);
-      z-index: 50;
     }
     .tab-btn {
       background: none; border: none;
@@ -759,12 +755,12 @@
 <!-- BLUEPRINT -->
 <section id="blueprint">
   <div class="section-inner">
-    <div style="margin-bottom:2rem" class="reveal">
-      <div class="label">Your Blueprint</div>
-      <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--ink);line-height:1.1">
-        Everything you need<br/><em style="font-weight:400;color:var(--burgundy)">to run the show.</em>
-      </h2>
-    </div>
+    <div style="position:sticky;top:0;background:var(--white);z-index:50;padding-top:0.75rem;padding-bottom:0;">
+      <div style="margin-bottom:0.75rem" class="reveal">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--ink);line-height:1.1">
+          The SheSpeaks <em style="font-weight:400;color:var(--burgundy)">Blueprint</em>
+        </h2>
+      </div>
 
     <div class="blueprint-tabs reveal">
       <button class="tab-btn active" data-tab="before">The Prep</button>
@@ -772,6 +768,7 @@
       <button class="tab-btn" data-tab="speakers">The Rules</button>
       <button class="tab-btn" data-tab="logistics">The Numbers
       </button>
+    </div>
     </div>
 
     <div id="tab-before" class="tab-panel active">
@@ -897,7 +894,6 @@
 <!-- FOUNDERS -->
 <section id="founders">
   <div class="section-inner" style="margin-bottom:2rem" >
-    <div class="label reveal">The Founders</div>
     <h2 class="reveal" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--ink);line-height:1.1">Started by two women<br/><em style="font-weight:400;color:var(--burgundy)">who needed this room.</em></h2>
   </div>
   <div class="founders-grid reveal">
