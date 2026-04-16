@@ -584,17 +584,30 @@
       overflow: hidden;
       padding: 4px 0;
     }
+    @media (max-width: 768px) {
+      .marquee-outer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .marquee-outer::-webkit-scrollbar { display: none; }
+      .marquee-track {
+        animation: none;
+        width: max-content;
+      }
+      .marquee-track img[aria-hidden="true"] { display: none; }
+    }
     .marquee-track {
       display: flex;
       gap: 12px;
       width: max-content;
-      animation: marquee 45s linear infinite;
+      animation: marquee 40s linear infinite;
     }
     @keyframes marquee {
       from { transform: translateX(0); }
       to   { transform: translateX(-50%); }
     }
-    .marquee-track-slow { animation-duration: 60s; }
+    .marquee-track-slow { animation-duration: 54s; }
     .marquee-track img {
       height: 220px;
       width: 220px;
@@ -695,7 +708,7 @@
     <li><a href="#blueprint">Blueprint</a></li>
     <li><a href="#founders">Founders</a></li>
   </ul>
-  <a class="nav-cta" href="#cta">Host a Show</a>
+  <a class="nav-cta" href="#blueprint">Host a Show</a>
 </nav>
 
 <!-- HERO -->
