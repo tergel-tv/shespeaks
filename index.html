@@ -385,10 +385,14 @@
       display: flex; gap: 0;
       border-bottom: 1px solid rgba(26,18,8,0.1);
       margin-bottom: 2.5rem;
+      position: sticky;
+      top: 57px;
+      background: var(--white);
+      z-index: 50;
     }
     .tab-btn {
       background: none; border: none;
-      padding: 0.9rem 2rem;
+      padding: 0.9rem 1.25rem;
       font-family: 'Inter', sans-serif;
       font-size: 0.72rem;
       letter-spacing: 0.12em;
@@ -401,6 +405,9 @@
     }
     .tab-btn.active { color: var(--burgundy); border-bottom-color: var(--burgundy); }
     .tab-btn:hover:not(.active) { color: var(--ink); }
+    @media (max-width: 480px) {
+      .tab-btn { padding: 0.75rem 0.6rem; font-size: 0.65rem; }
+    }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
