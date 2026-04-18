@@ -1313,9 +1313,11 @@ entertain and connect!</p>
       ta.select();
     }
 
-    function attachIcon(el) {
+    function attachIconAlways(el) { attachIcon(el, true); }
+
+    function attachIcon(el, skipWordCount = false) {
       if (el.dataset.cmsReady) return;
-      if (wordCount(el.innerText) < MIN_WORDS) return;
+      if (!skipWordCount && wordCount(el.innerText) < MIN_WORDS) return;
       if (el.closest('nav, form, script, style, .cms-modal')) return;
       el.dataset.cmsReady = '1';
       el.style.position = 'relative';
@@ -1328,7 +1330,10 @@ entertain and connect!</p>
       el.appendChild(icon);
     }
 
-    function addAllIcons() { document.querySelectorAll(SELECTORS).forEach(attachIcon); }
+    function addAllIcons() {
+      document.querySelectorAll(SELECTORS).forEach(el => attachIcon(el));
+      document.querySelectorAll('.tab-btn, h3.card-title').forEach(attachIconAlways);
+    }
     function removeAllIcons() {
       document.querySelectorAll('.cms-icon').forEach(i => i.remove());
       document.querySelectorAll('[data-cms-ready]').forEach(el => delete el.dataset.cmsReady);
