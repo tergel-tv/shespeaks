@@ -696,6 +696,130 @@
     .card-number {
       transition: color 0.3s ease;
     }
+
+    /* ── CMS ── */
+    .cms-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      background: #2a3a1a;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      letter-spacing: 0.04em;
+      transition: background 0.2s;
+    }
+    .cms-toggle.active { background: #7a2020; }
+    .cms-toggle:hover { opacity: 0.9; }
+
+    .cms-icon {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border: 1.5px solid #c8d8b0;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #2a3a1a;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+      padding: 0;
+      z-index: 100;
+      transition: background 0.15s;
+    }
+    .cms-icon:hover { background: #e8f5d0; }
+    .cms-mode [data-cms-ready]:hover .cms-icon { display: flex; }
+
+    .cms-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cms-modal {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      width: min(520px, 92vw);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .cms-modal-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #666;
+    }
+    .cms-textarea {
+      width: 100%;
+      min-height: 130px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.55;
+      resize: vertical;
+      box-sizing: border-box;
+      color: #1a1a1a;
+      outline: none;
+    }
+    .cms-textarea:focus { border-color: #7aaa40; }
+    .cms-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .cms-btn {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .cms-btn-cancel { background: #f0f0f0; color: #555; }
+    .cms-btn-cancel:hover { background: #e4e4e4; }
+    .cms-btn-save { background: #2a3a1a; color: #fff; }
+    .cms-btn-save:hover { background: #3d5528; }
+    .cms-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .cms-toast {
+      position: fixed;
+      bottom: 70px;
+      right: 24px;
+      z-index: 10001;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .cms-toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -1063,6 +1187,171 @@ entertain and connect!</p>
     btn.style.color = '#2a3a1a';
     e.target.querySelector('.cta-input').value = '';
   }
+
+  // ── CMS ──
+  (function() {
+    // ↓↓ FILL THESE IN ↓↓
+    const SUPABASE_URL  = 'https://fkcfskaibsgiexsvzcxz.supabase.co';
+    const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrY2Zza2FpYnNnaWV4c3Z6Y3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODA3OTMsImV4cCI6MjA5MjA1Njc5M30.Y5Er7_WYkcOoL7iul5RSACqgew9BuLTKGDuRQLbRBWo';
+    const EDIT_PASSWORD = 'thatsmytime';
+    // ↑↑ FILL THESE IN ↑↑
+
+    const STORAGE_KEY = 'shespeaks-cms-v1';
+    const MIN_WORDS = 10;
+    const SELECTORS = 'p, h1, h2, h3, h4, li, .hero-eyebrow, .card-title, .founder-bio, .cta-title, .cta-sub';
+    let editMode = false;
+    let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+    const DB_HEADERS = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json'
+    };
+
+    function wordCount(text) {
+      return text.trim().split(/\s+/).filter(w => w).length;
+    }
+
+    function elId(el) {
+      const tag = el.tagName.toLowerCase();
+      const cls = el.className ? '.' + el.className.trim().split(/\s+/).join('.') : '';
+      const key = tag + cls;
+      const all = Array.from(document.querySelectorAll(key));
+      return key + ':' + all.indexOf(el);
+    }
+
+    function applyContent(id, text) {
+      try {
+        const lastColon = id.lastIndexOf(':');
+        const sel = id.slice(0, lastColon);
+        const idx = parseInt(id.slice(lastColon + 1));
+        const el = document.querySelectorAll(sel)[idx];
+        if (el) el.innerText = text;
+      } catch(e) {}
+    }
+
+    // Load from localStorage instantly, then fetch fresh from Supabase
+    Object.entries(saved).forEach(([id, text]) => applyContent(id, text));
+
+    async function fetchRemote() {
+      if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
+      try {
+        const res = await fetch(SUPABASE_URL + '/rest/v1/content?select=id,value', { headers: DB_HEADERS });
+        if (!res.ok) return;
+        const rows = await res.json();
+        rows.forEach(row => {
+          saved[row.id] = row.value;
+          applyContent(row.id, row.value);
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      } catch(e) {}
+    }
+
+    async function saveRemote(id, value) {
+      if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
+      await fetch(SUPABASE_URL + '/rest/v1/content', {
+        method: 'POST',
+        headers: { ...DB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+        body: JSON.stringify({ id, value })
+      });
+    }
+
+    function showToast(msg, ok = true) {
+      const t = document.createElement('div');
+      t.className = 'cms-toast';
+      t.textContent = msg;
+      t.style.background = ok ? '#2a3a1a' : '#7a2020';
+      document.body.appendChild(t);
+      requestAnimationFrame(() => t.classList.add('show'));
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2500);
+    }
+
+    function openModal(el) {
+      const overlay = document.createElement('div');
+      overlay.className = 'cms-overlay';
+
+      const modal = document.createElement('div');
+      modal.className = 'cms-modal';
+      modal.innerHTML = '<div class="cms-modal-label">Edit text</div>';
+
+      const ta = document.createElement('textarea');
+      ta.className = 'cms-textarea';
+      ta.value = el.innerText.trim();
+
+      const actions = document.createElement('div');
+      actions.className = 'cms-actions';
+
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'cms-btn cms-btn-save';
+      saveBtn.textContent = 'Save';
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'cms-btn cms-btn-cancel';
+      cancelBtn.textContent = 'Cancel';
+
+      saveBtn.onclick = async () => {
+        const id = elId(el);
+        const value = ta.value;
+        saveBtn.textContent = 'Saving…';
+        saveBtn.disabled = true;
+        saved[id] = value;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+        el.innerText = value;
+        await saveRemote(id, value).catch(() => showToast('Saved locally only — check your Supabase config', false));
+        showToast('Saved!');
+        overlay.remove();
+        if (editMode) attachIcon(el);
+      };
+      cancelBtn.onclick = () => overlay.remove();
+      overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
+
+      actions.append(cancelBtn, saveBtn);
+      modal.append(ta, actions);
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+      ta.focus();
+      ta.select();
+    }
+
+    function attachIcon(el) {
+      if (el.dataset.cmsReady) return;
+      if (wordCount(el.innerText) < MIN_WORDS) return;
+      if (el.closest('nav, form, script, style, .cms-modal')) return;
+      el.dataset.cmsReady = '1';
+      el.style.position = 'relative';
+
+      const icon = document.createElement('button');
+      icon.className = 'cms-icon';
+      icon.title = 'Edit this text';
+      icon.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-2.207 2.207L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>';
+      icon.onclick = e => { e.stopPropagation(); openModal(el); };
+      el.appendChild(icon);
+    }
+
+    function addAllIcons() { document.querySelectorAll(SELECTORS).forEach(attachIcon); }
+    function removeAllIcons() {
+      document.querySelectorAll('.cms-icon').forEach(i => i.remove());
+      document.querySelectorAll('[data-cms-ready]').forEach(el => delete el.dataset.cmsReady);
+    }
+
+    const toggle = document.createElement('button');
+    toggle.className = 'cms-toggle';
+    toggle.textContent = '✏ Edit';
+    toggle.onclick = () => {
+      if (!editMode) {
+        const pw = prompt('Enter the edit password:');
+        if (pw !== EDIT_PASSWORD) { if (pw !== null) alert('Wrong password.'); return; }
+      }
+      editMode = !editMode;
+      toggle.classList.toggle('active', editMode);
+      toggle.textContent = editMode ? '✕ Done editing' : '✏ Edit';
+      document.body.classList.toggle('cms-mode', editMode);
+      editMode ? addAllIcons() : removeAllIcons();
+    };
+    document.body.appendChild(toggle);
+
+    fetchRemote();
+  })();
 </script>
 </body>
 </html>
