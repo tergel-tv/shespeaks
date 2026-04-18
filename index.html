@@ -740,6 +740,9 @@
     }
     .cms-icon:hover { background: #e8f5d0; }
     .cms-mode [data-cms-ready]:hover .cms-icon { display: flex; }
+    @media (hover: none) {
+      .cms-mode [data-cms-ready] .cms-icon { display: flex; }
+    }
 
     .cms-overlay {
       position: fixed;
@@ -1193,7 +1196,7 @@ entertain and connect!</p>
     // ↓↓ FILL THESE IN ↓↓
     const SUPABASE_URL  = 'https://fkcfskaibsgiexsvzcxz.supabase.co';
     const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrY2Zza2FpYnNnaWV4c3Z6Y3h6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODA3OTMsImV4cCI6MjA5MjA1Njc5M30.Y5Er7_WYkcOoL7iul5RSACqgew9BuLTKGDuRQLbRBWo';
-    const EDIT_PASSWORD = 'thatsmytime';
+    const EDIT_PASSWORD = 'wow';
     // ↑↑ FILL THESE IN ↑↑
 
     const STORAGE_KEY = 'shespeaks-cms-v1';
